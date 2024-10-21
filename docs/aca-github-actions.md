@@ -79,8 +79,8 @@
     ```
 
 * Copy the *clientId* value into a newly created *AAD_CLIENT_ID* repo secret
-* Run the infrastructure deployment by running *Actions->00-Infra* manually; this action is defined in ```./aca-java-demo/.github/workflows/00-infra.yml```
-* Generate releases for all apps and microservices by running *Actions->00-Init-Repository-Todo-App* and *Actions->00-Init-Repository-Pet-Clinic* manually; these actions are defined in ```./aca-java-demo/.github/workflows/01-init-todo-app.yml``` and ```./aca-java-demo/.github/workflows/01-init-pet-clinic.yml```
+* Run the infrastructure deployment by running *Actions->00-Infra* manually; this action is defined in ```./aca-java-demo-advanced/.github/workflows/00-infra.yml```
+* Generate releases for all apps and microservices by running *Actions->00-Init-Repository-Todo-App* and *Actions->00-Init-Repository-Pet-Clinic* manually; these actions are defined in ```./aca-java-demo-advanced/.github/workflows/01-init-todo-app.yml``` and ```./aca-java-demo-advanced/.github/workflows/01-init-pet-clinic.yml```
 * Test the Todo application:
     If you have chosen to integrate with Azure DNS, point the browser to the custom URL of the Todo App, e.g. ```https://todoapp.aca-java-demo.DEVELOPMENT_ENVI.MY_COMPANY_DOMAIN.com``` - you can check the DNS records created. Alternatively, navigate to the newly created resource group and find the Todo ACA App service, and click on the URL in the overview blade.
 * Test the Pet Clinic application:

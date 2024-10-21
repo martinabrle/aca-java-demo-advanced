@@ -8,11 +8,11 @@ Application architecture and the original description of this Spring Boot app ca
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-[![01-Infra](https://github.com/martinabrle/aca-java-demo/actions/workflows/00-infra.yml/badge.svg)](https://github.com/martinabrle/aca-java-demo/actions/workflows/00-infra.yml)
+[![01-Infra](https://github.com/martinabrle/aca-java-demo-advanced/actions/workflows/00-infra.yml/badge.svg)](https://github.com/martinabrle/aca-java-demo-advanced/actions/workflows/00-infra.yml)
 
-[![00-Init-Repository-Todo-App - Init Repo](https://github.com/martinabrle/aca-java-demo/actions/workflows/01-init-todo-app.yml/badge.svg)](https://github.com/martinabrle/aca-java-demo/actions/workflows/01-init-todo-app.yml)
+[![00-Init-Repository-Todo-App - Init Repo](https://github.com/martinabrle/aca-java-demo-advanced/actions/workflows/01-init-todo-app.yml/badge.svg)](https://github.com/martinabrle/aca-java-demo-advanced/actions/workflows/01-init-todo-app.yml)
 
-[![00-Init-Repository-Pet-Clinic - Init Repo](https://github.com/martinabrle/aca-java-demo/actions/workflows/01-init-pet-clinic.yml/badge.svg)](https://github.com/martinabrle/aca-java-demo/actions/workflows/01-init-pet-clinic.yml)
+[![00-Init-Repository-Pet-Clinic - Init Repo](https://github.com/martinabrle/aca-java-demo-advanced/actions/workflows/01-init-pet-clinic.yml/badge.svg)](https://github.com/martinabrle/aca-java-demo-advanced/actions/workflows/01-init-pet-clinic.yml)
 
 ## Different ways of deploying the app into Azure Container Apps (ACA)
 
