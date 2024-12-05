@@ -8,15 +8,15 @@ param appName string = 'discovery-server'
 param appClientId string
 param containerImage string
 
-param certificateId string = ''
+//param certificateId string = ''
 
 param containerRegistryName string = replace(replace(acaName,'_', ''),'-','')
 param containerRegistrySubscriptionId string = subscription().id
 param containerRegistryRG string = resourceGroup().name
 
-param dnsZoneName string = ''
-param petClinicDnsZoneName string = ''
-param parentDnsZoneName string = ''
+// param dnsZoneName string = ''
+// param petClinicDnsZoneName string = ''
+// param parentDnsZoneName string = ''
 
 var acaTagsArray = json(empty(acaTags) ? '{ "CostCentre": "DEV", "Department": "RESEARCH", "WorkloadType": "TEST" }' : acaTags)
 
@@ -87,20 +87,21 @@ resource acaApp 'Microsoft.App/containerApps@2024-03-01' = {
           ]
           ingress: {
             targetPort: 8761
-            external: true
-            clientCertificateMode: 'ignore'
-            customDomains: empty(certificateId) ? [
-              {
-                name: '${appName}.${petClinicDnsZoneName}.${dnsZoneName}.${parentDnsZoneName}'
-                bindingType: 'Disabled'
-              }
-            ] : [
-              {
-                name: '${appName}.${petClinicDnsZoneName}.${dnsZoneName}.${parentDnsZoneName}'
-                certificateId: certificateId
-                bindingType:'SniEnabled'
-              }
-            ]
+            external: false
+            // external: true
+            // clientCertificateMode: 'ignore'
+            // customDomains: empty(certificateId) ? [
+            //   {
+            //     name: '${appName}.${petClinicDnsZoneName}.${dnsZoneName}.${parentDnsZoneName}'
+            //     bindingType: 'Disabled'
+            //   }
+            // ] : [
+            //   {
+            //     name: '${appName}.${petClinicDnsZoneName}.${dnsZoneName}.${parentDnsZoneName}'
+            //     certificateId: certificateId
+            //     bindingType:'SniEnabled'
+            //   }
+            // ]
           }
       }
       template: {
@@ -172,25 +173,25 @@ resource acaApp 'Microsoft.App/containerApps@2024-03-01' = {
     location: location
 }
 
-module dnsRecordCname './components/dns-record-cname.bicep' = {
-  name: 'dns-record-cname'
-  params: {
-    dnsZoneName: '${petClinicDnsZoneName}.${dnsZoneName}.${parentDnsZoneName}'
-    dnsRecordName: appName
-    dnsRecordValue: acaApp.properties.configuration.ingress.fqdn
-  }
-}
+// module dnsRecordCname './components/dns-record-cname.bicep' = {
+//   name: 'dns-record-cname'
+//   params: {
+//     dnsZoneName: '${petClinicDnsZoneName}.${dnsZoneName}.${parentDnsZoneName}'
+//     dnsRecordName: appName
+//     dnsRecordValue: acaApp.properties.configuration.ingress.fqdn
+//   }
+// }
 
-resource acaManagedCertificate 'Microsoft.App/managedEnvironments/managedCertificates@2024-03-01' = {
-  parent: acaEnvironment
-  name: 'managed-certificate-${appName}'
-  dependsOn: [
-    dnsRecordCname
-  ]
-  tags: acaTagsArray
-  properties: {
-    domainControlValidation: 'CNAME'
-    subjectName: '${appName}.${petClinicDnsZoneName}.${dnsZoneName}.${parentDnsZoneName}'
-  }
-  location: location
-}
+// resource acaManagedCertificate 'Microsoft.App/managedEnvironments/managedCertificates@2024-03-01' = {
+//   parent: acaEnvironment
+//   name: 'managed-certificate-${appName}'
+//   dependsOn: [
+//     dnsRecordCname
+//   ]
+//   tags: acaTagsArray
+//   properties: {
+//     domainControlValidation: 'CNAME'
+//     subjectName: '${appName}.${petClinicDnsZoneName}.${dnsZoneName}.${parentDnsZoneName}'
+//   }
+//   location: location
+// }
