@@ -166,6 +166,7 @@ jobs:
         if: ${{ env.DB != '' }}
         env:
           PGSQL_SERVER_NAME: '${{env.PGSQL_NAME}}.postgres.database.azure.com'
+          PGSQL_SERVER_NAME_SHORT: '${{env.PGSQL_NAME}}'
         run: |
           # Figure which service user to use and it's appId .. never know when to use id and when to use appId.
           appClientId=`az ad sp list --display-name "${{env.USER_IDENTITY_NAME}}" --query "[?displayName=='${{env.USER_IDENTITY_NAME}}'].appId" --out tsv`
@@ -179,7 +180,7 @@ jobs:
           echo "Token: ${PGPASSWORD}"
           
           # Create a new service user if needed - trying without -p <password> 
-          dbUserExists=`az postgres flexible-server execute -n "${{env.PGSQL_SERVER_NAME}}" -u "${{env.DBA_GROUP_NAME}}" -p "${PGPASSWORD}" -d "${{env.DB}}" -q "SELECT 1 FROM pg_roles WHERE rolname='${{env.DB_USER_NAME}}';" -o tsv`
+          dbUserExists=`az postgres flexible-server execute -n "${{env.PGSQL_SERVER_NAME_SHORT}}" -u "${{env.DBA_GROUP_NAME}}" -p "${PGPASSWORD}" -d "${{env.DB}}" -q "SELECT 1 FROM pg_roles WHERE rolname='${{env.DB_USER_NAME}}';" -o tsv`
           echo "User '${{env.DB_USER_NAME}}' exists: ${dbUserExists}"
 
           dbUserExists=`psql --set=sslmode=require -h ${{env.PGSQL_SERVER_NAME}} -p 5432 -d "${{env.DB}}" -U "${{env.DBA_GROUP_NAME}}" -tAc "SELECT 1 FROM pg_roles WHERE rolname='${{env.DB_USER_NAME}}';" -v ON_ERROR_STOP=1`
