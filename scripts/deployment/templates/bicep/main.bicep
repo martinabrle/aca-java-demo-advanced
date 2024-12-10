@@ -96,36 +96,42 @@ resource todoAppUserManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdent
   name: todoAppUserManagedIdentityName
   location: location
   tags: acaTagsArray
+  dependsOn: [logAnalytics] // this is only to artificially delay everything to make sure that the Log Analytics workspace is created + inited before anything else
 }
 
 resource petClinicAppUserManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: petClinicAppUserManagedIdentityName
   location: location
   tags: acaTagsArray
+  dependsOn: [logAnalytics] // this is only to artificially delay everything to make sure that the Log Analytics workspace is created + inited before anything else
 }
 
 resource petClinicConfigSvcUserManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: petClinicConfigSvcUserManagedIdentityName
   location: location
   tags: acaTagsArray
+  dependsOn: [logAnalytics] // this is only to artificially delay everything to make sure that the Log Analytics workspace is created + inited before anything else
 }
 
 resource petClinicCustsSvcUserManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: petClinicCustsSvcUserManagedIdentityName
   location: location
   tags: acaTagsArray
+  dependsOn: [logAnalytics] // this is only to artificially delay everything to make sure that the Log Analytics workspace is created + inited before anything else
 }
 
 resource petClinicVetsSvcUserManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: petClinicVetsSvcUserManagedIdentityName
   location: location
   tags: acaTagsArray
+  dependsOn: [logAnalytics] // this is only to artificially delay everything to make sure that the Log Analytics workspace is created + inited before anything else
 }
 
 resource petClinicVisitsSvcUserManagedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: petClinicVisitsSvcUserManagedIdentityName
   location: location
   tags: acaTagsArray
+  dependsOn: [logAnalytics] // this is only to artificially delay everything to make sure that the Log Analytics workspace is created + inited before anything else
 }
 
 module logAnalytics 'components/log-analytics.bicep' = {
@@ -164,6 +170,18 @@ module petClinicAppInsights 'components/app-insights.bicep' = {
 //   tags: acaTagsArray
 // }
 
+module containerRegistry './components/container-registry.bicep' = {
+  name: 'container-registry'
+  scope: resourceGroup(containerRegistrySubscriptionIdVar, containerRegistryRGVar)
+  params: {
+    name: containerRegistryName
+    location: location
+    tagsArray: containerRegistryTagsArray
+    logAnalyticsWorkspaceId: logAnalytics.outputs.logAnalyticsWorkspaceId
+  }
+  dependsOn: [todoAppInsights, petClinicAppInsights] // this is only to artificially delay everything to make sure that the Log Analytics workspace + all App Insights is created + inited before anything else
+}
+
 module pgsql './components/pgsql.bicep' = {
   name: 'pgsql'
   scope: resourceGroup(pgsqlSubscriptionIdVar, pgsqlRGVar)
@@ -177,17 +195,7 @@ module pgsql './components/pgsql.bicep' = {
     tagsArray: pgsqlTagsArray
     logAnalyticsWorkspaceId: logAnalytics.outputs.logAnalyticsWorkspaceId
   }
-}
-
-module containerRegistry './components/container-registry.bicep' = {
-  name: 'container-registry'
-  scope: resourceGroup(containerRegistrySubscriptionIdVar, containerRegistryRGVar)
-  params: {
-    name: containerRegistryName
-    location: location
-    tagsArray: containerRegistryTagsArray
-    logAnalyticsWorkspaceId: logAnalytics.outputs.logAnalyticsWorkspaceId
-  }
+  dependsOn: [containerRegistry] // this is only to artificially delay everything to make sure that the Log Analytics workspace + all App Insights is created + inited before anything else
 }
 
 module keyVault 'components/kv.bicep' = {
