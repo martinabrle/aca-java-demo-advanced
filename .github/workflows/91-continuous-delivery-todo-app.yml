@@ -170,11 +170,11 @@ jobs:
         run: |
           # Figure which service user to use and it's appId .. never know when to use id and when to use appId.
           appClientId=`az ad sp list --display-name "${{env.USER_IDENTITY_NAME}}" --query "[?displayName=='${{env.USER_IDENTITY_NAME}}'].appId" --out tsv`
-        
+
           echo "DB user: ${{env.DB_USER_NAME}}"
           echo "Managed identity name: ${{env.USER_IDENTITY_NAME}}"
           echo "Managed identity appClientId: ${appClientId}"
-            
+          
           # Retrieve PGSQL access token 
           export PGPASSWORD=`az account get-access-token --resource-type oss-rdbms --query "[accessToken]" --output tsv`
           echo "Token: ${PGPASSWORD}"
@@ -191,15 +191,15 @@ jobs:
           fi
           # psql --set=sslmode=require -h ${{env.PGSQL_SERVER_NAME}} -p 5432 -d "${{env.DB}}" -U "${{env.DBA_GROUP_NAME}}" -tAc "security label for pgaadauth on role ${{env.DB_USER_NAME}} is 'aadauth,oid=${appClientId},type=service';" -v ON_ERROR_STOP=1
           az postgres flexible-server execute -n "${{env.PGSQL_SERVER_NAME_SHORT}}" -u "${{env.DBA_GROUP_NAME}}" -p "${PGPASSWORD}" -d "${{env.DB}}" -q "security label for pgaadauth on role ${{env.DB_USER_NAME}} is 'aadauth,oid=${appClientId},type=service';" 
-            
+          
           # Sync DB Schema
           # psql --set=sslmode=require -h "${{env.PGSQL_SERVER_NAME}}" -p 5432 -d "${{env.DB}}" -U "${{env.DBA_GROUP_NAME}}" --file=./${{env.ARTIFACT_NAME}}-${{steps.versions.outputs.VERSION}}/db/pgsql/schema.sql -v ON_ERROR_STOP=1
           az postgres flexible-server execute -n "${{env.PGSQL_SERVER_NAME_SHORT}}" -u "${{env.DBA_GROUP_NAME}}" -p "${PGPASSWORD}" -d "${{env.DB}}" --file-path=./${{env.ARTIFACT_NAME}}-${{steps.versions.outputs.VERSION}}/db/pgsql/schema.sql
-
+          
           # Load (demo) data
           # psql --set=sslmode=require -h "${{env.PGSQL_SERVER_NAME}}" -p 5432 -d "${{env.DB}}" -U "${{env.DBA_GROUP_NAME}}" --file=./${{env.ARTIFACT_NAME}}-${{steps.versions.outputs.VERSION}}/db/pgsql/data.sql -v ON_ERROR_STOP=1
           az postgres flexible-server execute -n "${{env.PGSQL_SERVER_NAME_SHORT}}" -u "${{env.DBA_GROUP_NAME}}" -p "${PGPASSWORD}" -d "${{env.DB}}" --file-path=./${{env.ARTIFACT_NAME}}-${{steps.versions.outputs.VERSION}}/db/pgsql/data.sql
-            
+          
           # Grant the newly create service user all necessary rights
           # psql --set=sslmode=require -h "${{env.PGSQL_SERVER_NAME}}" -p 5432 -d "${{env.DB}}" -U "${{env.DBA_GROUP_NAME}}" -tAc "GRANT CONNECT ON DATABASE ${{env.DB}} TO ${{env.DB_USER_NAME}};" -v ON_ERROR_STOP=1
           # psql --set=sslmode=require -h "${{env.PGSQL_SERVER_NAME}}" -p 5432 -d "${{env.DB}}" -U "${{env.DBA_GROUP_NAME}}" -tAc "GRANT USAGE ON SCHEMA public TO ${{env.DB_USER_NAME}};" -v ON_ERROR_STOP=1
