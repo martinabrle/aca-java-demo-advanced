@@ -49,7 +49,9 @@ jobs:
           fetch-depth: 0
       
       - name: Allow Preview versions and upgrade to the latest AZ CLI
-        run: az upgrade --yes --allow-preview true --only-show-errors
+        run: |
+          az config set extension.dynamic_install_allow_preview=true
+          az upgrade --yes --allow-preview true --only-show-errors
       
       - name: Init version numbers
         id: versions
